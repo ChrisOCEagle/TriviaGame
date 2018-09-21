@@ -8,7 +8,8 @@
 
 // create some variables to store correct and incorrect answers
 var correct = 0,
-    incorrect = 0;
+    incorrect = 0,
+    index = 0;
 // create an array for the questions that contains each individual question as an object
 var questions = [
         {imageSrc: "assets/images/Charmander-Silhouette.png",
@@ -61,30 +62,36 @@ $(document).ready(function() {
 
     // Here is where the bulk of the game will take place
     $(document).on("click", ".btns > button", function() {
-        
-        if ( $(this).attr("data-name") === questions[0].answer ) {
-            timer.stopTime();
-            correct++;
-            var correctImg = $("<img src='" + questions[0].answerSrc + "'>").attr("width", "200px");
-            $("#image").html(correctImg);
-            var correctText = "Congrats, you got it right! The correct answer was: ";
-            $("#text").text(correctText + questions[0].answer);
-            setTimeout(function() {
-                display(questions[1]);
-                timer.start();
-            },3000);
-        } else {
-            timer.stopTime();
-            incorrect++;
-            var correctImg = $("<img src='" + questions[0].answerSrc + "'>").attr("width", "200px");
-            $("#image").html(correctImg);
-            var incorrectText = "The answer you chose was incorrect, the correct answer was: ";
-            $("#text").text(incorrectText + questions[0].answer);
-            setTimeout(function() {
-                display(questions[1]);
-                timer.start();
-            },3000);
-        }
+
+        if ( index < questions.length ) {
+            if ( $(this).attr("data-name") === questions[index].answer ) {
+                timer.stopTime();
+                correct++;
+                var correctImg = $("<img src='" + questions[index].answerSrc + "'>");
+                correctImg.attr("width", "200px");
+                $("#image").html(correctImg);
+                var correctText = "Congrats, you got it right! The correct answer was: ";
+                $("#text").text(correctText + questions[index].answer);
+                setTimeout(function() {
+                    display(questions[index + 1]);
+                    timer.start();
+                    index++;
+                },3000);
+            } else {
+                timer.stopTime();
+                incorrect++;
+                var correctImg = $("<img src='" + questions[index].answerSrc + "'>");
+                correctImg.attr("width", "200px");
+                $("#image").html(correctImg);
+                var incorrectText = "The answer you chose was incorrect, the correct answer was: ";
+                $("#text").text(incorrectText + questions[index].answer);
+                setTimeout(function() {
+                    display(questions[index + 1]);
+                    timer.start();
+                    index++;
+                },3000);
+            }
+        } else if ( index === questions.length ) {}
     });
 });
 
@@ -123,15 +130,18 @@ var intervalId,
             // stop the timer when it reaches zero
             if ( timer.time === 0 ) {
                 timer.stopTime();
-                var correctImg = $("<img src='" + questions[0].answerSrc + "'>");
-                correctImg.attr("width", "200px");
-                $("#image").html(correctImg);
-                $("#text").html("Time's up!" + "<br>");
-                $("#text").append("The answer is: " + questions[0].answer);
-                setTimeout(function() {
-                    display(questions[1]);
-                    timer.start();
-                },3000);
+                if ( index < questions.length ) {
+                    var correctImg = $("<img src='" + questions[index].answerSrc + "'>");
+                    correctImg.attr("width", "200px");
+                    $("#image").html(correctImg);
+                    $("#text").html("Time's up!" + "<br>");
+                    $("#text").append("The answer is: " + questions[index].answer);
+                    setTimeout(function() {
+                        display(questions[index + 1]);
+                        timer.start();
+                        index++;
+                    },3000);
+                } else if ( index === questions.length ) {}
             }
         },
         // the property of the timer that stops the timer from running
