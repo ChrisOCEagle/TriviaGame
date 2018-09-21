@@ -8,35 +8,40 @@
 
 // create some variables to store correct and incorrect answers
 var correct = 0,
-    incorrect = 0,
-    correctImage = "assets/images/Correct.png",
-    incorrectImage = "assets/images/Incorrect.png",
+    incorrect = 0;
 // create an array for the questions that contains each individual question as an object
-    questions = [
-        {image: "assets/images/Charmander.png",
+var questions = [
+        {imageSrc: "assets/images/Charmander-Silhouette.png",
          choices: ["Pikachu", "Charmander", "Bulbasaur", "Squirtle"],
          answer: "Charmander",
+         answerSrc: "assets/images/Charmander.png",
          displayed: false},
-        {image: "assets/images/Bulbasaur.png",
+        {imageSrc: "assets/images/Bulbasaur-Silhouette.png",
          choices: ["Pikachu", "Charmander", "Bulbasaur", "Squirtle"],
          answer: "Bulbasaur",
+         answerSrc: "assets/images/Bulbasaur.png",
          displayed: false},
-        {image: "assets/images/Pikachu.png",
+        {imageSrc: "assets/images/Pikachu-Silhouette.png",
          choices: ["Pikachu", "Charmander", "Bulbasaur", "Squirtle"],
          answer: "Pikachu",
+         answerSrc: "assets/images/Pikachu.png",
          displayed: false},
-        {image: "assets/images/Squirtle.png",
+        {imageSrc: "assets/images/Squirtle-Silhouette.png",
          choices: ["Pikachu", "Charmander", "Bulbasaur", "Squirtle"],
          answer: "Squirtle",
+         answerSrc: "assets/images/Squirtle.png",
          displayed: false}
     ];
+
 // this function will display the image and the buttons dynamically
 function display(param) {
     // displays the image
-    var img = $("<img src='" + param.image + "'>").attr("width", "200px");
+    var img = $("<img src='" + param.imageSrc + "'>").attr("width", "200px");
     $("#image").html(img);
     param.displayed = true;
     // displays the answer choices as buttons
+    $(".btns").empty();
+    $("#text").empty();
     for ( i = 0; i < param.choices.length; i++) {
         var btn = $("<button>").text(param.choices[i]);
         btn.attr("data-name", param.choices[i]);
@@ -45,27 +50,44 @@ function display(param) {
     }
 
 $(document).ready(function() {
+    // display the starting time in the timer div
+    $("#timer").text(timer.timeConverter(timer.time))
     // create a click event for the start button
     // once the start button is clicked the timer will start and the first question will display
     $("#start").on("click", function() {
-        timer.start;
+        timer.start();
         display(questions[0]);
     });
-    // display the starting time in the timer div
-    $("#timer").text(timer.timeConverter(timer.time))
+
     // Here is where the bulk of the game will take place
     $(document).on("click", ".btns > button", function() {
-        console.log($(this))
+        
         if ( $(this).attr("data-name") === questions[0].answer ) {
             timer.stopTime();
             correct++;
+            var correctImg = $("<img src='" + questions[0].answerSrc + "'>").attr("width", "200px");
+            $("#image").html(correctImg);
+            var correctText = "Congrats, you got it right! The correct answer was: ";
+            $("#text").text(correctText + questions[0].answer);
+            setTimeout(function() {
+                display(questions[1]);
+                timer.start();
+            },3000);
         } else {
             timer.stopTime();
             incorrect++;
+            var correctImg = $("<img src='" + questions[0].answerSrc + "'>").attr("width", "200px");
+            $("#image").html(correctImg);
+            var incorrectText = "The answer you chose was incorrect, the correct answer was: ";
+            $("#text").text(incorrectText + questions[0].answer);
+            setTimeout(function() {
+                display(questions[1]);
+                timer.start();
+            },3000);
         }
-    })
-})
-console.log(timer.start);
+    });
+});
+
 // the code for the timer
 // the variable the will hold the setInterval
 var intervalId,
@@ -101,6 +123,15 @@ var intervalId,
             // stop the timer when it reaches zero
             if ( timer.time === 0 ) {
                 timer.stopTime();
+                var correctImg = $("<img src='" + questions[0].answerSrc + "'>");
+                correctImg.attr("width", "200px");
+                $("#image").html(correctImg);
+                $("#text").html("Time's up!" + "<br>");
+                $("#text").append("The answer is: " + questions[0].answer);
+                setTimeout(function() {
+                    display(questions[1]);
+                    timer.start();
+                },3000);
             }
         },
         // the property of the timer that stops the timer from running
