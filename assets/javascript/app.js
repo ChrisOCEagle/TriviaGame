@@ -9,7 +9,9 @@
 // create some variables to store correct and incorrect answers
 var correct = 0,
     incorrect = 0,
-    index = 0;
+    index = 0,
+    correctAnswersText = $("#correct-answers-text"),
+    incorrectAnswersText = $("#incorrect-answers-text");
 // create an array for the questions that contains each individual question as an object
 var questions = [
         {imageSrc: "assets/images/Charmander-Silhouette.png",
@@ -73,6 +75,7 @@ $(document).ready(function() {
                 var correctText = "Congrats, you got it right! The correct answer was: ";
                 $("#text").text(correctText + questions[index].answer);
                 setTimeout(function() {
+                    questions[index].displayed = false;
                     display(questions[index + 1]);
                     timer.start();
                     index++;
@@ -86,12 +89,13 @@ $(document).ready(function() {
                 var incorrectText = "The answer you chose was incorrect, the correct answer was: ";
                 $("#text").text(incorrectText + questions[index].answer);
                 setTimeout(function() {
+                    questions[index].displayed = false;
                     display(questions[index + 1]);
                     timer.start();
                     index++;
                 },3000);
             }
-        } else if ( index === questions.length ) {}
+        }
     });
 });
 
@@ -137,11 +141,12 @@ var intervalId,
                     $("#text").html("Time's up!" + "<br>");
                     $("#text").append("The answer is: " + questions[index].answer);
                     setTimeout(function() {
+                        questions[index].displayed = false;
                         display(questions[index + 1]);
                         timer.start();
                         index++;
                     },3000);
-                } else if ( index === questions.length ) {}
+                }
             }
         },
         // the property of the timer that stops the timer from running
